@@ -1,0 +1,16 @@
+[
+  {
+    "id": "3555cae4-82e5-4e8c-8a97-fa5576eaa1e5",
+    "email": "test@example.com",
+    "password": "123456",
+    "dailyCount": 2,
+    "lastReset": "2025-08-14"
+  },
+  {
+    "id": "bb797401-91c3-48b6-8b27-31eddce915f7",
+    "email": "admin@example.com",
+    "password": "123456",
+    "dailyCount": 0,
+    "lastReset": null
+  }
+]
