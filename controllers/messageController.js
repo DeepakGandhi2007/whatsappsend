@@ -161,3 +161,38 @@ exports.sendMessage = async (req, res) => {
     });
   }
 };
+
+exports.getUsageStats = async (req, res) => {
+  try {
+    const { userId } = req.query;
+
+    if (!userId)
+      return res.status(400).json({ success: false, message: "User ID is required" });
+
+    const now = new Date();
+    const weekAgo = new Date(now);
+    const monthAgo = new Date(now);
+    weekAgo.setDate(now.getDate() - 7);
+    monthAgo.setMonth(now.getMonth() - 1);
+
+    // Count documents
+    const [weeklyCount, monthlyCount] = await Promise.all([
+      SentMessage.countDocuments({ userId, timestamp: { $gte: weekAgo } }),
+      SentMessage.countDocuments({ userId, timestamp: { $gte: monthAgo } }),
+    ]);
+
+    return res.json({
+      success: true,
+      weeklyCount,
+      monthlyCount,
+    });
+
+  } catch (err) {
+    console.error("💥 Error fetching usage stats:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: err.message,
+    });
+  }
+};
