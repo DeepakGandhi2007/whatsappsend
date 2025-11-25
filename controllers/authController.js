@@ -103,8 +103,27 @@ exports.checkAuth = async (req, res) => {
     const token = req.headers.authorization?.replace("Bearer ", "");
     const user = await User.findOne({ token });
 
-    if (user) return res.json({ success: true, userId: user._id });
-    res.status(401).json({ success: false, message: "Invalid or expired token" });
+    if (!user)
+      return res.status(401).json({ success: false, message: "Invalid or expired token" });
+
+    // Check account expiry
+    if (new Date() > new Date(user.expiresAt)) {
+      user.deviceId = null;
+      user.token = null;
+      await user.save();
+      return res.status(403).json({
+        success: false,
+        expired: true,
+        message: "Your subscription has expired."
+      });
+    }
+
+    res.json({
+      success: true,
+      userId: user._id,
+      expiresAt: user.expiresAt
+    });
+
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
