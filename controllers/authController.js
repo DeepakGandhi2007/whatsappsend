@@ -44,7 +44,16 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ email, password });
 
     if (!user) return res.status(401).json({ success: false, message: "Invalid credentials" });
-
+   if (new Date() > new Date(user.expiresAt)) {
+      user.deviceId = null;
+      user.token = null;
+      await user.save();
+      return res.status(403).json({
+        success: false,
+        expired: true,
+        message: "Your account has expired. Please purchase again."
+      });
+    }
     // User not logged in yet
     if (!user.deviceId) {
       const token = uuidv4();
