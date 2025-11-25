@@ -7,7 +7,8 @@ const userSchema = new mongoose.Schema({
   dailyCount: Number,
   lastReset: Date,
   deviceId: { type: String, default: null },
-  token: { type: String, default: null }
+  token: { type: String, default: null },
+  expiresAt: { type: Date }
 });
 
 module.exports = mongoose.model("User", userSchema);
