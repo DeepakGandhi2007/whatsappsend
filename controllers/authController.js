@@ -61,7 +61,7 @@ exports.login = async (req, res) => {
       user.token = token;
       await user.save();
 
-      return res.json({ success: true, token, userId: user._id });
+      return res.json({ success: true, token, userId: user._id, expiresAt: user.expiresAt });
     }
 
     // User already logged in from this device
