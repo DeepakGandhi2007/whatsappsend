@@ -12,14 +12,30 @@ exports.register = async (req, res) => {
     if (existingUser)
       return res.status(409).json({ success: false, message: "User already exists" });
 
-    const newUser = new User({ email, password, dailyCount: 0, lastReset: null });
+    const expiryDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+    const newUser = new User({
+      email,
+      password,
+      dailyCount: 0,
+      lastReset: null,
+      createdAt: Date.now(),
+      expiresAt: expiryDate,
+    });
+    
     await newUser.save();
 
-    res.json({ success: true, userId: newUser._id });
+    res.json({
+      success: true,
+      userId: newUser._id,
+      expiresAt: newUser.expiresAt
+    });
+
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
 
 // Login
 exports.login = async (req, res) => {
