@@ -65,9 +65,15 @@ exports.login = async (req, res) => {
     }
 
     // User already logged in from this device
-    if (user.deviceId === deviceId) {
-      return res.json({ success: true, token: user.token, userId: user._id });
-    }
+      if (user.deviceId === deviceId) {
+      return res.json({
+        success: true,
+        token: user.token,
+        userId: user._id,
+        expiresAt: user.expiresAt
+      });
+}
+
 
     // User trying to log in from another device
     return res.status(403).json({
